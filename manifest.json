@@ -1,0 +1,7 @@
+{
+  "name": "Color Scheme",
+  "id": "815841134222084922",
+  "api": "1.0.0",
+  "main": "build/main.js",
+  "ui": "build/ui.html"
+}

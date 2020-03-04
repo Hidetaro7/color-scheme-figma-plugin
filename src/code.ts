@@ -1,23 +1,6 @@
-// This plugin will open a modal to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
-
-// This file holds the main code for the plugins. It has access to the *document*.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser enviroment (see documentation).
-
-// This shows the HTML page in "ui.html".
 figma.showUI(__html__, { width: 780, height: 700 });
 
-// Calls to "parent.postMessage" from within the HTML page will trigger this
-// callback. The callback will be passed the "pluginMessage" property of the
-// posted message.
-
 figma.ui.onmessage = async msg => {
-  //console.log(msg);
-  // One way of distinguishing between different types of messages sent from
-  // your HTML page is to use an object with a "type" property like this.
-
-  //
   const newPage = figma.createPage();
   newPage.name = "Colors";
   let scss = "";
@@ -25,7 +8,7 @@ figma.ui.onmessage = async msg => {
   if (msg.type === "create-rectangles") {
     const nodes = [];
     const colors = msg.colors;
-
+    console.log(colors);
     const createColorDataCode = (cd: any) => {
       //console.log(cd);
       return { r: cd.r / 255, g: cd.g / 255, b: cd.b / 255 };
@@ -47,16 +30,17 @@ figma.ui.onmessage = async msg => {
 
     const createSCSS = group => {
       // scss
-      scss += `// ${group.prefix} \n`;
-      group.colors.forEach(item => {
-        scss += `$-${group.prefix}-${item.label}: ${item.color}; \n`;
+      scss += `// ${group.title} \n`;
+      group.group.forEach(item => {
+        scss += `$-${group.title}-${item.label}: ${item.color}; \n`;
       });
       scss += "\n";
       //console.log(scss);
     };
 
     colors.forEach((group, ind) => {
-      const colorGroup = group.colors;
+      const colorGroup = group.group;
+      //console.log(group);
       createSCSS(group);
       for (let i = 0; i < colorGroup.length; i++) {
         const color = createColorDataCode(colorGroup[i].rgbColor);
@@ -67,7 +51,7 @@ figma.ui.onmessage = async msg => {
         circle.fills = [{ type: "SOLID", color: color }];
         newPage.appendChild(circle);
         nodes.push(circle);
-        setColorStyle("$-" + group.prefix + "-" + colorGroup[i].label, color);
+        setColorStyle("$-" + group.title + "-" + colorGroup[i].label, color);
       }
     });
 
@@ -81,7 +65,6 @@ figma.ui.onmessage = async msg => {
     scssText.characters = scss;
     newPage.appendChild(scssText);
     nodes.push(scssText);
-
     newPage.selection = nodes;
     figma.viewport.scrollAndZoomIntoView(nodes);
   }

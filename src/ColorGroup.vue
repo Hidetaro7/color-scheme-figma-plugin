@@ -5,34 +5,31 @@
         class="main-color"
         :style="{
           color: isInvertText ? '#000' : '#fff',
-          'background-color': colors.hex
+          'background-color': myValue.defaultColor.hex
         }"
         @click="isShowPicker = true"
       >
-        <div><span v-text="prefix"></span>-500</div>
+        <div>
+          <span v-text="myValue.title"></span>-500
+        </div>
         <small>Default</small>
-        <div class="hex-code" v-text="colors.hex"></div>
-        <div class="border" :style="{ 'border-color': colors.hex }"></div>
+        <div class="hex-code" v-text="myValue.defaultColor.hex"></div>
+        <div class="border" :style="{ 'border-color': myValue.defaultColor.hex }"></div>
       </div>
       <div class="combination-wrapper">
-        <div class="prefix-input">
-          <input
-            type="text"
-            @focus="selectText"
-            class="prefix-title"
-            v-model="prefix"
-          />
+        <div class="control-bar">
+          <div class="prefix-input">
+            <input type="text" @focus="selectText" class="prefix-title" v-model="myValue.title" />
+          </div>
+          <div class="options">
+            <div class="navbtn delete" data-name="Delete" @click="$emit('delete', value)">
+              <img src="./icon_trash.svg" alt="delete" />
+            </div>
+          </div>
         </div>
         <div class="swatches">
-          <div
-            class="combination-item"
-            v-for="(item, index) in combination"
-            :key="index"
-          >
-            <div
-              :style="{ 'background-color': item.color }"
-              class="swatch"
-            ></div>
+          <div class="combination-item" v-for="(item, index) in myValue.group" :key="index">
+            <div :style="{ 'background-color': item.color }" class="swatch"></div>
             <div class="label" :class="{ 'is-white': index >= 4 }">
               <span v-text="item.label"></span>
             </div>
@@ -45,7 +42,7 @@
         <div class="close-colorpicker" @click="isShowPicker = false">
           <img src="./close.svg" alt="close" />
         </div>
-        <chrome-picker v-model="colors"></chrome-picker>
+        <chrome-picker v-model="myValue.defaultColor"></chrome-picker>
       </div>
     </div>
   </div>
@@ -63,65 +60,59 @@ export default {
   },
   data() {
     return {
-      id: null,
-      prefix: "(untitled)",
-      combination: [],
-      colors: {},
       isInvertText: false,
       isShowPicker: false
     };
   },
   props: {
-    defaultColor: {
+    value: {
       type: Object,
       default: {
-        hex: "#194d33",
-        hsl: { h: 0, s: 0.5, l: 0.2, a: 1 },
-        hsv: { h: 0, s: 0.66, v: 0.3, a: 1 },
-        rgba: { r: 255, g: 77, b: 51, a: 1 },
-        a: 1
+        id: null,
+        title: "testTitle",
+        defaultColor: {
+          hex: "#ff0000"
+        },
+        group: []
       }
-    },
-    title: {
-      type: String,
-      default: "(untitled)"
     }
   },
-  computed: {},
+  computed: {
+    myValue: {
+      set(val) {
+        this.$emit("input", val);
+      },
+      get() {
+        return this.value;
+      }
+    }
+  },
   methods: {
     selectText(e) {
       e.target.select();
     },
     emit() {
-      this.$emit("change-color", {
-        id: this.id,
-        prefix: this.prefix,
-        colors: this.combination
-      });
+      /* this.$emit("input", {
+        id: this.id
+      }); */
     }
   },
   watch: {
-    prefix(newPrefix) {
-      this.emit();
+    "myValue.defaultColor": function(val) {
+      this.myValue.group = createSwatches(tinycolor(val.hex).toHexString());
     },
-    colors(newColor, oldColor) {
-      this.isInvertText = tinycolor.isReadable("#000", newColor.hex, {});
-      this.combination = createSwatches(tinycolor(newColor.hex).toHexString());
-      this.emit();
+    myValue: {
+      handler(val) {
+        this.$emit("input", val);
+      },
+      deep: true
     }
   },
   created() {
-    if (this.defaultColor.hex) {
-      this.color = this.defaultColor;
-      this.colors = this.defaultColor;
-    }
-    if (this.title !== "") {
-      this.prefix = this.title;
-    }
-    this.id = uuidv4();
-    this.combination = createSwatches(tinycolor(this.color.hex).toHexString());
-    //console.log(this.color.hex);
-    this.emit();
+    this.myValue.id = uuidv4();
+    this.myValue.group = createSwatches(
+      tinycolor(this.myValue.defaultColor.hex).toHexString()
+    );
   }
 };
 </script>
@@ -229,6 +220,66 @@ $primary: #006aa9;
     left: 50%;
     font-size: 10px;
     transform: translateX(-50%);
+  }
+}
+.control-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .options {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    .navbtn {
+      position: relative;
+      cursor: pointer;
+      img {
+        position: relative;
+        z-index: 3;
+        opacity: 0.6;
+      }
+      &::after {
+        display: none;
+        content: attr(data-name);
+        color: #666;
+        position: absolute;
+        font-size: 10px;
+        font-weight: 600;
+        top: 0;
+        left: 50%;
+        background-color: #eee;
+        padding: 3px 6px;
+        line-height: 1;
+        border-radius: 4px;
+        z-index: 3;
+      }
+      &:hover {
+        &::before {
+          content: "";
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background-color: #f9f9f9;
+          position: absolute;
+          top: -5px;
+          left: -5px;
+          display: block;
+          z-index: 1;
+        }
+        &::after {
+          display: block;
+          transform: translate(-50%, -1.4rem) scale(1);
+        }
+      }
+      &:active {
+        img {
+          opacity: 1;
+        }
+        &::before {
+          background-color: #ececec;
+        }
+      }
+    }
   }
 }
 

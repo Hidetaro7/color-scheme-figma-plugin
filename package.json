@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@caohenghu/vue-colorpicker": "^1.2.4",
+    "sweetalert2": "^9.8.2",
     "tinycolor2": "^1.4.1",
     "uuid": "^7.0.1",
     "vue-color": "^2.7.0",

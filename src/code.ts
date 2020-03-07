@@ -3,12 +3,13 @@ figma.showUI(__html__, { width: 780, height: 700 });
 figma.ui.onmessage = async msg => {
   const newPage = figma.createPage();
   newPage.name = "Colors";
-  let scss = "";
+  let scss =
+    "// SCSS\n// --------------------------------------------------------\n\n";
 
   if (msg.type === "create-rectangles") {
     const nodes = [];
     const colors = msg.colors;
-    console.log(colors);
+    //console.log(colors);
     const createColorDataCode = (cd: any) => {
       //console.log(cd);
       return { r: cd.r / 255, g: cd.g / 255, b: cd.b / 255 };
@@ -46,7 +47,7 @@ figma.ui.onmessage = async msg => {
         const color = createColorDataCode(colorGroup[i].rgbColor);
         const circle = figma.createEllipse();
         circle.name = colorGroup[i].label;
-        circle.x = i * 150;
+        circle.x = i * 150 + figma.viewport.center.x;
         circle.y = ind * 150;
         circle.fills = [{ type: "SOLID", color: color }];
         newPage.appendChild(circle);
@@ -59,13 +60,29 @@ figma.ui.onmessage = async msg => {
     const scssText = figma.createText();
     scssText.x = figma.viewport.center.x;
     scssText.y = (colors.length + 1) * 150;
-    await figma.loadFontAsync(scssText.fontName as FontName);
-    //scssText.fontName = { family: "consolas", style: "Regular" };
+    const fontlist = await figma.listAvailableFontsAsync();
+    const codeFont = fontlist.filter(font => {
+      return (
+        font.fontName.family.match(
+          /Consolas|Source Code Pro|Inconsolata|Menlo|Monaco|Roboto Mono|Roboto/gi
+        ) && font.fontName.style === "Regular"
+      );
+    });
+    if (codeFont.length !== 0) {
+      await figma.loadFontAsync({
+        family: codeFont[0].fontName.family,
+        style: "Regular"
+      });
+      scssText.fontName = codeFont[0].fontName;
+    }
+    //console.log(codeFont);
+
     scssText.fontSize = 24;
     scssText.characters = scss;
     newPage.appendChild(scssText);
     nodes.push(scssText);
     newPage.selection = nodes;
+    figma.currentPage = newPage;
     figma.viewport.scrollAndZoomIntoView(nodes);
   }
 

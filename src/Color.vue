@@ -8,13 +8,16 @@
       </div>
     </header>
     <main class="app-main">
-      <color-group
-        v-for="(item, index) in colorGroups"
-        :key="index"
-        v-model="colorGroups[index]"
-        @delete="deleteGroup"
-      />
-      <div class="create-newgroup" @click="addNewScheme">Add New Scheme</div>
+      <div class="app-main-left app-main-inner">
+        <color-group
+          v-for="(item, index) in colorGroups"
+          :key="index"
+          v-model="colorGroups[index]"
+          @delete="deleteGroup"
+        />
+        <div class="create-newgroup" @click="addNewScheme">Add New Scheme</div>
+      </div>
+      <!-- <div class="app-main-right app-main-inner"></div> -->
     </main>
     <!-- <p>{{colorGroups}}</p> -->
     <div class="button-area">
@@ -22,7 +25,9 @@
         class="button button-create"
         @click="create"
         :style="{ 'background-color': prefix500 }"
-      >Create Color Style on Figma</button>
+      >
+        Create Color Style on Figma
+      </button>
     </div>
   </div>
 </template>
@@ -33,6 +38,7 @@ import { Sketch } from "vue-color";
 import createSwatches from "./ColorChanger";
 import ColorGroup from "./ColorGroup";
 import { ToggleButton } from "vue-js-toggle-button";
+import Swal from "sweetalert2";
 
 export default {
   components: {
@@ -66,13 +72,42 @@ export default {
   },
   methods: {
     deleteGroup(e) {
+      // this.colorGroupsが一つだったら
+      if (this.colorGroups.length === 1) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "This is the last Color Scheme !"
+        });
+        return;
+      }
       const newGroup = this.colorGroups.filter(elem => {
         return elem.id !== e.id;
       });
-      const result = confirm(`Can I delete "${e.title}"`);
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: `Can I delete "${e.title}"`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#b01f24",
+        cancelButtonColor: "#666",
+        confirmButtonText: "Yes, delete it!"
+      }).then(result => {
+        if (result.value) {
+          this.colorGroups = newGroup;
+          Swal.fire({
+            position: "top-end",
+            title: `Deleted your "${e.title}"`,
+            showConfirmButton: false,
+            timer: 1500
+          });
+        }
+      });
+      /* const result = confirm(`Can I delete "${e.title}"`);
       if (result) {
         this.colorGroups = newGroup;
-      }
+      } */
     },
     addNewScheme() {
       this.colorGroups.push({
@@ -146,17 +181,34 @@ body {
 * {
   box-sizing: border-box;
 }
+
+.swal2-popup .swal2-title {
+  font-size: 14px;
+  margin: 0;
+}
+.vc-chrome-alpha-wrap,
+.vc-chrome-color-wrap {
+  display: none;
+}
+.vc-chrome-body {
+  padding: 0.5rem 0 !important;
+}
+.vc-chrome-fields-wrap {
+  padding-top: 0 !important;
+}
 </style>
 <style lang="scss" scoped>
 .color-scheme {
   height: 100vh;
   color: #333;
   --primary: #c30643;
+  --border: #eee;
   display: flex;
   flex-direction: column;
   &.is-dark {
     color: #fff;
     background-color: #111;
+    --border: #222;
   }
 }
 .app-header {
@@ -164,13 +216,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
-  /* position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  z-index: 5; background-color: rgba(#fff, 0.9);*/
-
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   h1 {
     letter-spacing: -0.02em;
@@ -200,17 +246,23 @@ button {
 .app-main {
   /* padding-top: 4rem;
   padding-bottom: 4rem; */
-  flex-shrink: 1;
+  flex-grow: 1;
+  /* display: flex; */
+  justify-content: space-between;
+  align-items: stretch;
   overflow-y: auto;
+  &-inner {
+  }
+  .app-main-right {
+    border-left: 1px solid var(--border);
+    width: 375px;
+    display: none;
+  }
 }
 
 .button-area {
-  flex-shrink: 0; /* 
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  left: 0;
-  background-color: rgba(#fff, 0.9); */
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
   padding: 1rem;
   .button-create {
     width: 100%;

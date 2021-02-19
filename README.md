@@ -1,8 +1,6 @@
-# Vue
+# Color Scheme for Figma
 
-<img src="../_screenshots/webpack.png" width="400" />
-
-Creates rectangles (same as the [Webpack sample plugin][webpack]).
+![Frame 2](https://user-images.githubusercontent.com/281424/108452867-a69a3f00-72ac-11eb-81b8-0d9a1ba6517a.jpg)
 
 This demonstrates:
 
@@ -21,6 +19,7 @@ To build:
     $ npx webpack
 
 n 11.14.0
-\$ yarn watch
+
+    $ yarn watch
 
 [webpack]: ../webpack/

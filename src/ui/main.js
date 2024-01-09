@@ -1,4 +1,5 @@
-import { createApp } from 'vue';
-import ui from './ui.vue';
+import { createApp } from "vue";
+import ui from "./ui.vue";
+import "../style.css";
 
-createApp(ui).mount('#ui');
+createApp(ui).mount("#ui");

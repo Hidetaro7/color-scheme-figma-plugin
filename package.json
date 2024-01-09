@@ -13,6 +13,7 @@
   "license": "",
   "dependencies": {
     "@figma/plugin-typings": "^1.40.0",
+    "@headlessui/vue": "^1.7.17",
     "typescript": "^4.5.4",
     "vue": "^3.2.26"
   },

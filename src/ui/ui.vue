@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import SampleComponent from "./components/sample-component.vue";
-
+import { Icon } from "@iconify/vue";
 // methods
 const create = () => {
   window.parent.postMessage(
@@ -15,6 +15,7 @@ const cancel = () => {
 
 <template>
   <sample-component />
+  <Icon icon="material-symbols:delete-outline-rounded" />
   <button id="create" @click="create()">Create</button>
   <button id="cancel" @click="cancel()">Cancel</button>
 </template>

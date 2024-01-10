@@ -8,6 +8,15 @@ module.exports = {
       jumpu: {
         prefix: "",
       },
+      container: {
+        center: true,
+        padding: {
+          DEFAULT: "1rem",
+          sm: "1rem",
+          lg: "1rem",
+          xl: "1rem",
+        },
+      },
     },
   },
   plugins: [...jumpu, typography],

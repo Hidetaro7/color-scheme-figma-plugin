@@ -82,7 +82,7 @@ export const createColorScheme = (rgb) => {
   const h = hsl[0];
   const s = hsl[1];
   const l = hsl[2];
-  const min = l > 5 ? 5 : 0;
+  const min = l > 5 ? 5 : 1;
   const max = l < 97 ? 98.5 : 99.5;
   const step1 = parseInt((max - l) / 7);
   const step2 = parseInt((l - min) / 4);
@@ -90,8 +90,8 @@ export const createColorScheme = (rgb) => {
   // 薄い
   for (let i = 0; i < 7; i++) {
     //console.log(max - step1 * i);
-    const resL = 100 - l * easeInQuad((i + 1) / 8);
-    const lightness = resL < 95 ? resL : 95;
+    const resL = max - l * easeInQuad((i + 1) / 7);
+    const lightness = resL < 99 ? resL : 99;
     resColors.push({
       hsl: `hsl(${h},${s}%,${lightness}%)`,
       hex: hslToHex(h, s, lightness),

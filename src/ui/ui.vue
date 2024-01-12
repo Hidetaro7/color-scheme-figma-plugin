@@ -12,7 +12,7 @@ import { addScheme } from "../utils.js";
 <template>
   <div class="h-screen relative flex flex-col w-screen">
     <AppHeader class="sticky top-0" />
-    <div class="container grow py-4">
+    <div class="container grow py-2">
       <ColorItem v-for="colors in schemes" :colors="colors" :key="colors.id" />
       <div class="my-2 text-center">
         <button class="text-button" @click="addScheme">add</button>

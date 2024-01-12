@@ -39,14 +39,18 @@ const removeItem = () => removeScheme(props.colors.id);
 </script>
 
 <template>
-  <p>Color: <input type="color" v-model="rgb" /></p>
-
   <div class="flex items-center gap-x-4 py-4">
     <div class="w-[120px]">
       <div
-        class="w-full aspect-square rounded-full"
+        class="w-full aspect-square rounded-full relative overflow-hidden hover:ring-2 hover:ring-offset-2 transition-all duration-200"
         :style="{ backgroundColor: rgb }"
-      ></div>
+      >
+        <input
+          type="color"
+          v-model="rgb"
+          class="appearance-none absolute inset-0 w-full h-full border-0 opacity-0"
+        />
+      </div>
       <div class="text-center my-2">
         <div class="font-semibold text-xs text-gray-600">
           {{ current.prefix }}-700
@@ -58,7 +62,7 @@ const removeItem = () => removeScheme(props.colors.id);
       <div class="mb-2 flex items-center gap-x-4">
         <input type="text" class="input" v-model="current.prefix" />
         <button
-          class="icon-button"
+          class="icon-button disabled:text-gray-300 hover:disabled:bg-transparent"
           @click="removeItem"
           :disabled="schemes.length <= 1"
         >

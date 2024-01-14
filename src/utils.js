@@ -1,3 +1,4 @@
+import { h } from "vue";
 import { schemes, sampleScheme } from "./store";
 
 export const getScheme = (id) => {
@@ -21,24 +22,26 @@ export const addScheme = () => {
 };
 
 export const hex2hsl = (hex) => {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  // HEXコードをRGBに変換
+  let r = parseInt(hex.substring(1, 3), 16) / 255;
+  let g = parseInt(hex.substring(3, 5), 16) / 255;
+  let b = parseInt(hex.substring(5, 7), 16) / 255;
 
-  var r = parseInt(result[1], 16);
-  var g = parseInt(result[2], 16);
-  var b = parseInt(result[3], 16);
+  // 最小値と最大値を計算
+  const min = Math.min(r, g, b);
+  const max = Math.max(r, g, b);
 
-  (r /= 255), (g /= 255), (b /= 255);
-  var max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-  var h,
+  // 明るさを計算
+  let h,
     s,
     l = (max + min) / 2;
 
-  if (max == min) {
-    h = s = 0; // achromatic
+  if (max === min) {
+    h = s = 0; // 一色のみの場合
   } else {
-    var d = max - min;
+    const d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
     switch (max) {
       case r:
         h = (g - b) / d + (g < b ? 6 : 0);
@@ -50,16 +53,16 @@ export const hex2hsl = (hex) => {
         h = (r - g) / d + 4;
         break;
     }
+
     h /= 6;
   }
 
-  s = s * 100;
-  s = Math.round(s);
-  l = l * 100;
-  l = Math.round(l);
-  h = Math.round(360 * h);
+  // HSL値を[0, 360]の範囲に変換
+  h = Math.round(h * 360);
+  s = Math.round(s * 100);
+  l = Math.round(l * 100);
 
-  return [h, s, l];
+  return { h, s, l };
 };
 
 export const hslToHex = (h, s, l) => {
@@ -75,40 +78,48 @@ export const hslToHex = (h, s, l) => {
   return `#${f(0)}${f(8)}${f(4)}`;
 };
 
-export const easeInQuad = (x) => x * x;
-
 export const createColorScheme = (rgb) => {
   const hsl = hex2hsl(rgb);
-  const h = hsl[0];
-  const s = hsl[1];
-  const l = hsl[2];
-  const min = l > 5 ? 5 : 1;
-  const max = l < 97 ? 98.5 : 99.5;
-  const step1 = parseInt((max - l) / 7);
-  const step2 = parseInt((l - min) / 4);
+  const lightStep = 8;
+  const darkStep = 3;
+
+  const P0 = { x: 0, y: 100 };
+  const P1 = { x: 50, y: 100 };
+  const P2 = { x: 70, y: hsl.l };
+  const P3 = { x: 70, y: 10 };
+  const P4 = { x: 100, y: 10 };
+
+  function quadraticBezier(A0, A1, A2, t) {
+    const x =
+      Math.pow(1 - t, 2) * A0.x +
+      2 * (1 - t) * t * A1.x +
+      Math.pow(t, 2) * A2.x;
+    const y =
+      Math.pow(1 - t, 2) * A0.y +
+      2 * (1 - t) * t * A1.y +
+      Math.pow(t, 2) * A2.y;
+    return { x, y };
+  }
+
+  const createStepColor = (o) => {
+    P4.y = P3.y = hsl.l < 20 ? 0 : 10;
+    const point = quadraticBezier(o.v0, o.v1, o.v2, o.i / o.step);
+    const reshsl = `hsl(${hsl.h}, ${hsl.s}%, ${point.y}%)`;
+    const hex = hslToHex(hsl.h, hsl.s, point.y);
+    return { hsl: reshsl, hex };
+  };
+
   const resColors = [];
-  // 薄い
-  for (let i = 0; i < 7; i++) {
-    //console.log(max - step1 * i);
-    const resL = max - l * easeInQuad((i + 1) / 7);
-    const lightness = resL < 99 ? resL : 99;
-    resColors.push({
-      hsl: `hsl(${h},${s}%,${lightness}%)`,
-      hex: hslToHex(h, s, lightness),
-    });
+  for (let i = 1; i <= lightStep; i++) {
+    resColors.push(
+      createStepColor({ i, step: lightStep, v0: P0, v1: P1, v2: P2 })
+    );
   }
-  // 現在
-  resColors.push({
-    hsl: `hsl(${h},${s}%,${l}%)`,
-    hex: hslToHex(h, s, l),
-  });
-  // hslToHex
-  // 濃い
-  for (let i = 4; i > 1; i--) {
-    resColors.push({
-      hsl: `hsl(${h},${s}%,${step2 * i}%)`,
-      hex: hslToHex(h, s, step2 * i),
-    });
+  for (let i = 1; i <= darkStep; i++) {
+    resColors.push(
+      createStepColor({ i, step: darkStep, v0: P2, v1: P3, v2: P4 })
+    );
   }
+  //console.log(resColors);
   return resColors;
 };

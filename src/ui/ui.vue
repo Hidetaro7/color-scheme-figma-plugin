@@ -20,6 +20,7 @@ import { addScheme } from "../utils.js";
     </div>
 
     <AppFooter class="sticky bottom-0" />
+    <ModalDialog :open="true" />
   </div>
 </template>
 

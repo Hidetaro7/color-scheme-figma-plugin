@@ -73,10 +73,31 @@ const removeItem = () => removeScheme(props.colors.id);
         </button>
       </div>
       <div class="flex items-center gap-3">
-        <div class="w-10 text-center" v-for="(color, index) in variantColors">
+        <div
+          class="w-10 text-center relative"
+          v-for="(color, index) in variantColors"
+        >
+          <div
+            v-if="tokens[index] === '700'"
+            class="absolute left-1/2 -top-2 -translate-x-1/2 -translate-y-full"
+          >
+            <div class="tag tag-help">
+              Default
+              <button class="icon-button w-auto h-auto hover:bg-primary-900">
+                <Icon
+                  icon="material-symbols:help"
+                  class="text-sm text-gray-700"
+                />
+              </button>
+            </div>
+          </div>
           <div
             class="w-10 h-10 rounded-full"
             :style="{ backgroundColor: color.hex }"
+            :class="{
+              'border border-gray-300': index < 3,
+              'default-color': tokens[index] === '700',
+            }"
           ></div>
           <div class="text-gray-700 mt-2 text-xs font-semibold">
             {{ tokens[index] }}
@@ -89,4 +110,14 @@ const removeItem = () => removeScheme(props.colors.id);
   </div>
 </template>
 
-<style lang="scss"></style>
+<style scoped>
+.default-color {
+  @apply ring-2 ring-offset-2 ring-gray-300;
+}
+.tag {
+  @apply bg-gray-200 text-gray-500 text-[10px] px-2 rounded-full leading-none;
+}
+.tag-help {
+  @apply flex gap-x-1 items-center;
+}
+</style>

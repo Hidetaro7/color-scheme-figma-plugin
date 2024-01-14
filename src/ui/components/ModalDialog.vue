@@ -1,7 +1,4 @@
 <template>
-  <p>
-    <button type="button" @click="openModal" class="button">Open dialog</button>
-  </p>
   <TransitionRoot appear :show="isOpen" as="template">
     <Dialog as="div" @close="closeModal" class="relative z-10">
       <TransitionChild
@@ -63,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import {
   TransitionRoot,
   TransitionChild,
@@ -72,7 +69,19 @@ import {
   DialogTitle,
 } from "@headlessui/vue";
 
-const isOpen = ref(false);
+const props = defineProps({
+  open: {
+    type: Boolean,
+    default: false,
+  },
+});
+const isOpen = ref(props.open);
+watch(
+  () => props.open,
+  (value) => {
+    isOpen.value = value;
+  }
+);
 
 function closeModal() {
   isOpen.value = false;

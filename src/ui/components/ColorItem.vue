@@ -84,10 +84,7 @@ const removeItem = () => removeScheme(props.colors.id);
             <div class="tag tag-help">
               Default
               <button class="icon-button w-auto h-auto hover:bg-primary-900">
-                <Icon
-                  icon="material-symbols:help"
-                  class="text-sm text-gray-700"
-                />
+                <Icon icon="material-symbols:help" class="text-sm" />
               </button>
             </div>
           </div>
@@ -110,7 +107,7 @@ const removeItem = () => removeScheme(props.colors.id);
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .default-color {
   @apply ring-2 ring-offset-2 ring-gray-300;
 }
@@ -119,5 +116,8 @@ const removeItem = () => removeScheme(props.colors.id);
 }
 .tag-help {
   @apply flex gap-x-1 items-center;
+  .icon-button {
+    @apply hover:bg-gray-300 hover:text-gray-800 active:text-primary-900;
+  }
 }
 </style>

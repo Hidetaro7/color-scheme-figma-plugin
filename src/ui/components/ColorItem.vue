@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
-import { Icon } from "@iconify/vue";
+import { Icon, iconExists, listIcons } from "@iconify/vue";
 import { schemes, tokens } from "../../store.js";
 import ModalDialog from "./ModalDialog.vue";
 import {
@@ -67,15 +67,15 @@ const helpOpen = ref(false);
           v-model="current.prefix"
           @focus="$event.target.select()"
         />
+
         <button
           class="icon-button disabled:text-gray-300 hover:disabled:bg-transparent"
           @click="removeItem"
           :disabled="schemes.length <= 1"
         >
-          <Icon
-            icon="material-symbols:delete-forever-rounded"
-            class="text-lg"
-          />
+          <span
+            class="icon-[material-symbols--delete-forever-rounded] text-xl"
+          ></span>
         </button>
       </div>
       <div class="flex items-center gap-3">
@@ -88,11 +88,14 @@ const helpOpen = ref(false);
             class="absolute left-1/2 -top-2 -translate-x-1/2 -translate-y-full"
           >
             <div
-              class="tag-help bg-gray-200 text-gray-500 text-[10px] p-0.5 pl-2 rounded-full leading-none flex gap-x-1 items-center relative"
+              class="tag-help bg-gray-200 text-gray-500 text-[10px] p-0.5 px-2 rounded-full leading-none flex gap-x-1 items-center relative"
             >
               Default
-              <button class="icon-button" @click="helpOpen = true">
-                <Icon icon="material-symbols:help" class="text-sm" />
+              <button
+                class="icon-button w-auto h-auto"
+                @click="helpOpen = true"
+              >
+                <span class="icon-[material-symbols--help] text-sm"></span>
               </button>
             </div>
           </div>
@@ -148,7 +151,7 @@ const helpOpen = ref(false);
 }
 .tag-help {
   .icon-button {
-    @apply w-4 h-4 text-xs hover:bg-gray-300 hover:text-gray-800 active:text-primary-900;
+    @apply hover:bg-gray-300 hover:text-gray-800 active:text-primary-900;
   }
   &::after {
     border: 4px solid transparent;

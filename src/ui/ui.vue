@@ -19,10 +19,9 @@ import { addScheme } from "../utils.js";
           class="add-button border-gray-300 hover:border-gray-400 text-gray-400 outlined-button rounded-full flex items-center gap-x-2 mx-auto px-4 py-2 transition-all duration-200 text-sm hover:filter-none hover:bg-white"
           @click="addScheme"
         >
-          <Icon
-            icon="material-symbols:add-circle-outline-rounded"
-            class="text-xl mr-1"
-          />
+          <span
+            class="icon-[material-symbols--add-circle-outline-rounded] text-xl"
+          ></span>
           add color...
         </button>
       </div>

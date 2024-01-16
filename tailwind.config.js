@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 const jumpu = require("@jumpu-ui/tailwindcss");
 const typography = require("@tailwindcss/typography");
+const { addDynamicIconSelectors } = require("@iconify/tailwind");
 module.exports = {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
@@ -19,5 +20,5 @@ module.exports = {
       },
     },
   },
-  plugins: [...jumpu, typography],
+  plugins: [...jumpu, typography, addDynamicIconSelectors()],
 };

@@ -1,7 +1,9 @@
 {
-  "name": "Color Scheme 2024",
+  "name": "Color Scheme",
+  "id": "815841134222084922",
   "api": "1.0.0",
   "editorType": ["figma"],
   "main": "dist/src/code/code.js",
-  "ui": "dist/src/ui/ui.html"
+  "ui": "dist/src/ui/ui.html",
+  "networkAccess": { "allowedDomains": ["none"] }
 }

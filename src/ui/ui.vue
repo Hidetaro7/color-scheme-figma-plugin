@@ -15,12 +15,21 @@ import { addScheme } from "../utils.js";
     <div class="container grow py-2">
       <ColorItem v-for="colors in schemes" :colors="colors" :key="colors.id" />
       <div class="my-2 text-center">
-        <button class="text-button" @click="addScheme">add</button>
+        <button
+          class="add-button border-gray-300 hover:border-gray-400 text-gray-400 outlined-button rounded-full flex items-center gap-x-2 mx-auto px-4 py-2 transition-all duration-200 text-sm hover:filter-none hover:bg-white"
+          @click="addScheme"
+        >
+          <Icon
+            icon="material-symbols:add-circle-outline-rounded"
+            class="text-xl mr-1"
+          />
+          add color...
+        </button>
       </div>
     </div>
 
     <AppFooter class="sticky bottom-0" />
-    <ModalDialog :open="true" />
+    <ModalDialog :open="false" />
   </div>
 </template>
 

@@ -2,10 +2,10 @@
 import { ref, computed } from "vue";
 import { Icon } from "@iconify/vue";
 import { schemes, tokens } from "../../store.js";
+import ModalDialog from "./ModalDialog.vue";
 import {
   hex2hsl,
   hslToHex,
-  easeInQuad,
   createColorScheme,
   getScheme,
   setScheme,
@@ -36,6 +36,7 @@ const variantColors = computed(() => {
 });
 
 const removeItem = () => removeScheme(props.colors.id);
+const helpOpen = ref(false);
 </script>
 
 <template>
@@ -60,14 +61,19 @@ const removeItem = () => removeScheme(props.colors.id);
     </div>
     <div class="grow">
       <div class="mb-2 flex items-center gap-x-4">
-        <input type="text" class="input" v-model="current.prefix" />
+        <input
+          type="text"
+          class="input"
+          v-model="current.prefix"
+          @focus="$event.target.select()"
+        />
         <button
           class="icon-button disabled:text-gray-300 hover:disabled:bg-transparent"
           @click="removeItem"
           :disabled="schemes.length <= 1"
         >
           <Icon
-            icon="material-symbols:delete-outline-rounded"
+            icon="material-symbols:delete-forever-rounded"
             class="text-lg"
           />
         </button>
@@ -81,9 +87,11 @@ const removeItem = () => removeScheme(props.colors.id);
             v-if="tokens[index] === '700'"
             class="absolute left-1/2 -top-2 -translate-x-1/2 -translate-y-full"
           >
-            <div class="tag tag-help">
+            <div
+              class="tag-help bg-gray-200 text-gray-500 text-[10px] p-0.5 pl-2 rounded-full leading-none flex gap-x-1 items-center relative"
+            >
               Default
-              <button class="icon-button w-auto h-auto hover:bg-primary-900">
+              <button class="icon-button" @click="helpOpen = true">
                 <Icon icon="material-symbols:help" class="text-sm" />
               </button>
             </div>
@@ -103,6 +111,32 @@ const removeItem = () => removeScheme(props.colors.id);
           <!-- <div class="text-[10px]">{{ color.hsl }}</div> -->
         </div>
       </div>
+
+      <ModalDialog :open="helpOpen" @close="helpOpen = false">
+        <template v-slot:header> 700をデフォルトにする </template>
+        <template v-slot:body>
+          <div class="text-sm">
+            <p>
+              これまでの経験や学びから、プライマリカラーを11段階中の薄い方から8番目（700）をデフォルトにすることにしました。
+            </p>
+            <p>
+              理由としては、濃い色の利用頻度よりも薄い色の利用頻度が高いからで、影やボーダーの微妙な濃淡が豊富なほうが、デザインの幅が広がると考えたからです。
+            </p>
+            <p>
+              Figma/Githubコミュニティ上で公開しているデザインシステム
+              <a
+                href="https://www.figma.com/community/file/1042706969451783914/jumpu-ui-tailwind-css-components"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-primary-700 underline"
+              >
+                Jumpu UI
+              </a>
+              でもそのルールに従い、プライマリカラー700をデフォルトとしたトークンルールを定めています。
+            </p>
+          </div>
+        </template>
+      </ModalDialog>
     </div>
   </div>
 </template>
@@ -110,14 +144,16 @@ const removeItem = () => removeScheme(props.colors.id);
 <style lang="scss" scoped>
 .default-color {
   @apply ring-2 ring-offset-2 ring-gray-300;
-}
-.tag {
-  @apply bg-gray-200 text-gray-500 text-[10px] px-2 rounded-full leading-none;
+  @apply shadow-sm;
 }
 .tag-help {
-  @apply flex gap-x-1 items-center;
   .icon-button {
-    @apply hover:bg-gray-300 hover:text-gray-800 active:text-primary-900;
+    @apply w-4 h-4 text-xs hover:bg-gray-300 hover:text-gray-800 active:text-primary-900;
+  }
+  &::after {
+    border: 4px solid transparent;
+    @apply absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-t-gray-200;
+    content: "";
   }
 }
 </style>

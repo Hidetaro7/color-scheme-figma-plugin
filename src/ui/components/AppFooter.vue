@@ -11,10 +11,15 @@
 </template>
 
 <script setup>
-import { schemes } from "../../store.js";
+import { schemes, tokens } from "../../store.js";
 const create = () => {
   window.parent.postMessage(
-    { pluginMessage: { type: "create-rectangles", count: 5 } },
+    {
+      pluginMessage: {
+        type: "color-schemes",
+        message: JSON.stringify({ schemes: schemes.value, tokens }),
+      },
+    },
     "*"
   );
 };
